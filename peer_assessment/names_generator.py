@@ -1,9 +1,7 @@
 from random import Random
 
 
-def choose_left(seed=None):
-
-    random = Random(seed)
+def choose_left(n=None):
 
     left = [
         "admiring",
@@ -75,11 +73,15 @@ def choose_left(seed=None):
         "zen",
     ]
 
-    return random.choice(left)
+    if n is None:
+        result = random.choice(left)
+    else:
+        result = left[n % len(left)]
 
-def choose_right(seed=None):
+    return result
 
-    random = Random(seed)
+
+def choose_right(n=None):
 
     right = [
         "albattani",
@@ -523,14 +525,20 @@ def choose_right(seed=None):
         "yonath"
      ]
 
-    return random.choice(right)
+    if n is None:
+        result = random.choice(right)
+    else:
+        result = right[n % len(right)]
 
-def get_random_name(seed1=None, seed2=None):
+    return result
+    
+
+def get_random_name(n1=None, n2=None):
 
     name = ''
 
     while (name is '') or (name is 'boring_wozniak'): # Steve Wozniak is not boring
 
-        name = '{}_{}'.format(choose_left(seed1), choose_right(seed2))
+        name = '{}_{}'.format(choose_left(n1), choose_right(n2))
 
     return name
