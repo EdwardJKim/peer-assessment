@@ -2,3 +2,7 @@
 __pycache__/
 *.py[cod]
 
+# setuptools
+build/
+dist/
+pgrader.egg-info/
