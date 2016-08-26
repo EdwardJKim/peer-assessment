@@ -1,6 +1,5 @@
 import hashlib
 from pgrader.names_generator import get_random_name
-from pgrader.file import get_users
 
 
 def convert_single(user, week, ndigits=None):
@@ -18,3 +17,11 @@ def convert_single(user, week, ndigits=None):
 
     return '{}_{}'.format(name, hash_str[:ndigits])
 
+
+def make_table(users, week, ndigits=None):
+
+    table = {
+        user: convert_single(user, week, ndigits=ndigits) for user in users
+    }
+
+    return table
