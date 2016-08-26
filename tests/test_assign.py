@@ -1,6 +1,6 @@
-from peer_assessment.assign import make_anonymous
-from peer_assessment.names_generator import get_random_name
-from peer_assessment.file import get_users
+from pgrader.assign import make_anonymous
+from pgrader.names_generator import get_random_name
+from pgrader.file import get_users
 from nose.tools import assert_equal
 
 

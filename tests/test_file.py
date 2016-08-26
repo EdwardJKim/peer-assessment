@@ -1,4 +1,4 @@
-from peer_assessment.file import get_users
+from pgrader.file import get_users
 from nose.tools import assert_equal
 
 def test_jupyterhub_users():

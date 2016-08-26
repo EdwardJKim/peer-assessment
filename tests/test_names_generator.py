@@ -1,4 +1,4 @@
-from peer_assessment import names_generator as ng
+from pgrader import names_generator as ng
 from nose.tools import assert_equal
 
 def test_left():

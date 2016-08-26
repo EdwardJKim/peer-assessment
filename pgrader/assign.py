@@ -1,5 +1,5 @@
-from peer_assessment.names_generator import get_random_name
-from peer_assessment.file import get_users
+from pgrader.names_generator import get_random_name
+from pgrader.file import get_users
 
 
 def make_anonymous(users, week=1):

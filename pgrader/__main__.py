@@ -1,6 +1,6 @@
 import sys
-from peer_assessment.file import get_users
-from peer_assessment.assign import make_anonymous
+from pgrader.file import get_users
+from pgrader.assign import make_anonymous
 
 def main(args=None):
 
