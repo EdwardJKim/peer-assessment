@@ -20,5 +20,5 @@ def test_create_table():
 
         sys.stdout.write('{} users.'.format(len(users)))
 
-    do_weeks_from_student_list('tests/studentlist.accy')
-    do_weeks_from_student_list('tests/studentlist.info490')
+    do_weeks_from_student_list('tests/data/studentlist.accy')
+    do_weeks_from_student_list('tests/data/studentlist.info490')
