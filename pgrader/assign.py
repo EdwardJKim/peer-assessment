@@ -48,12 +48,12 @@ def assign_peers(table, npeers=5):
     peers = {}
     for user in table.keys():
         idx = names.index(table[user])
-        peers[user] = wrapped[idx:idx + npeers]
+        peers[user] = wrapped[idx + 1: idx + 1 + npeers]
 
     return peers
 
 
-def assign_notebooks(users, assignment, week):
+def assign_notebooks(users, assignment, week, header="header.ipynb", footer="footer.ipynb"):
 
     release_dir = os.path.join("release", assignment)
 
@@ -83,9 +83,7 @@ def assign_notebooks(users, assignment, week):
         for peer in peers[user]:
             for fname in filenames:
                 merged = merge_notebooks(
-                    ['peer-assessment/tests/data/header.ipynb', 
-                    os.path.join(submitted_dir, fname), 
-                    'peer-assessment/tests/data/footer.ipynb']
+                    [header, os.path.join(submitted_dir, fname), footer]
                 )
                 write_path = os.path.join(
                     release_user_dir,

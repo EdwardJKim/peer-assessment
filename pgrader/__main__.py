@@ -8,7 +8,7 @@ def main(args=None):
         args = sys.argv[1:]
 
     users = get_users("studentlist.accy")
-    assign_notebooks(users, "accy570_peer1_due_9_02", 0)
+    assign_notebooks(users, "test", 0)
 
 
 if __name__ == "__main__":

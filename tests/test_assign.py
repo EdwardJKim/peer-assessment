@@ -1,5 +1,5 @@
 import sys
-from nose.tools import assert_equal
+from nose.tools import assert_equal, assert_not_in
 
 from pgrader.assign import make_table, assign_peers
 from pgrader.names_generator import get_random_name
@@ -31,8 +31,10 @@ def test_assign_peers():
             assert_equal(len(peers[peer]), npeers)
             assert_equal(
                 set(peers[peer]),
-                set([i % 10 for i in range(table[peer], table[peer] + npeers)])
+                set([i % 10 for i in
+                    range(table[peer] + 1, table[peer] + 1 + npeers)])
             )
+            assert_not_in(table[peer], peers[peer])
 
     table = {
         'a': 0,
