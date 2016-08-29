@@ -40,15 +40,15 @@ def make_table(users, week, ndigits=None):
     return table
 
 
-def assign_peers(users, week, npeers=5):
+def assign_peers(table, npeers=5):
 
-    table = make_table(users, week)
     names = sorted(table.values())
+    wrapped = names * 2
 
     peers = {}
-    for user in users:
+    for user in table.keys():
         idx = names.index(table[user])
-        peers[user] = names[idx:idx + npeers]
+        peers[user] = wrapped[idx:idx + npeers]
 
     return peers
 
@@ -78,7 +78,7 @@ def assign_notebooks(users, assignment, week):
         if not os.path.exists(release_user_dir):
             os.makedirs(release_user_dir)
 
-        peers = assign_peers(users, week)
+        peers = assign_peers(table)
 
         for peer in peers[user]:
             for fname in filenames:
