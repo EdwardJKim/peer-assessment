@@ -1,5 +1,18 @@
 import hashlib
+import os
+import shutil
+import random
+
 from pgrader.names_generator import get_random_name
+from pgrader.merge import read_notebook, write_notebook, merge_notebooks
+
+
+def get_users(filename):
+
+    with open(filename) as f:
+        users = [line.strip().split()[0] for line in f]
+
+    return users
 
 
 def convert_single(user, week, ndigits=None):
@@ -25,3 +38,57 @@ def make_table(users, week, ndigits=None):
     }
 
     return table
+
+
+def assign_peers(users, week, npeers=5):
+
+    table = make_table(users, week)
+    names = sorted(table.values())
+
+    peers = {}
+    for user in users:
+        idx = names.index(table[user])
+        peers[user] = names[idx:idx + npeers]
+
+    return peers
+
+
+def assign_notebooks(users, assignment, week):
+
+    release_dir = os.path.join("release", assignment)
+
+    table = make_table(users, week)
+
+    if not os.path.exists(release_dir):
+        os.makedirs(release_dir)
+
+    for user in users:
+
+        submitted_dir = os.path.join(
+            "submitted", user, "week{}".format(week)
+        )
+
+
+        filenames = [
+            f for f in os.listdir(submitted_dir)
+            if f.endswith("ipynb")
+        ]
+
+        release_user_dir = os.path.join(release_dir, user)
+        if not os.path.exists(release_user_dir):
+            os.makedirs(release_user_dir)
+
+        peers = assign_peers(users, week)
+
+        for peer in peers[user]:
+            for fname in filenames:
+                merged = merge_notebooks(
+                    ['peer-assessment/tests/data/header.ipynb', 
+                    os.path.join(submitted_dir, fname), 
+                    'peer-assessment/tests/data/footer.ipynb']
+                )
+                write_path = os.path.join(
+                    release_user_dir,
+                    "{}_by_{}.ipynb".format(fname.split('.')[0], peer)
+                )
+                write_notebook(write_path, merged)
