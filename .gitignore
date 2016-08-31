@@ -8,4 +8,4 @@ dist/
 pgrader.egg-info/
 
 # student list
-tests/studentlist*
+tests/data/studentlist*
