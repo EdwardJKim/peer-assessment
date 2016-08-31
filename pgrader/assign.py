@@ -40,22 +40,24 @@ def make_table(users, week, ndigits=None):
     return table
 
 
-def assign_peers(table, npeers=5):
+def assign_peers(table, npeers=5, shuffle=True):
 
-    names = sorted(table.values())
+    names = sorted(table.keys())
+    if shuffle:
+        random.shuffle(names)
     wrapped = names * 2
 
     peers = {}
-    for user in table.keys():
-        idx = names.index(table[user])
-        peers[user] = wrapped[idx + 1: idx + 1 + npeers]
+    for idx, name in enumerate(names):
+        peers[name] = wrapped[idx + 1: idx + 1 + npeers]
 
     return peers
 
 
-def assign_notebooks(users, assignment, week, header="header.ipynb", footer="footer.ipynb"):
+def assign_notebooks(users, assignment_id, week,
+    header="header.ipynb", footer="footer.ipynb", remove_header=False):
 
-    release_dir = os.path.join("release", assignment)
+    release_dir = os.path.join("release", assignment_id)
 
     table = make_table(users, week)
 
@@ -64,14 +66,11 @@ def assign_notebooks(users, assignment, week, header="header.ipynb", footer="foo
 
     for user in users:
 
-        submitted_dir = os.path.join(
-            "submitted", user, "week{}".format(week)
-        )
-
+        submitted_dir = os.path.join("submitted", user, assignment_id)
 
         filenames = [
             f for f in os.listdir(submitted_dir)
-            if f.endswith("ipynb")
+            if f.endswith("ipynb") and f.startswith("Problem_")
         ]
 
         release_user_dir = os.path.join(release_dir, user)
@@ -82,11 +81,18 @@ def assign_notebooks(users, assignment, week, header="header.ipynb", footer="foo
 
         for peer in peers[user]:
             for fname in filenames:
+
+                peer_path = os.path.join(
+                    "submitted", peer, assignment_id, fname
+                )
                 merged = merge_notebooks(
-                    [header, os.path.join(submitted_dir, fname), footer]
+                    [header, peer_path, footer],
+                    remove_header=remove_header
                 )
                 write_path = os.path.join(
                     release_user_dir,
-                    "{}_by_{}.ipynb".format(fname.split('.')[0], peer)
+                    "{}_{}.ipynb".format(fname.split('.')[0], table[peer])
                 )
                 write_notebook(write_path, merged)
+
+        shutil.copy("rubric.py", os.path.join(release_user_dir, "rubric.py"))
