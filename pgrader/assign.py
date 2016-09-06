@@ -68,6 +68,8 @@ def assign_notebooks(users, assignment_id, week,
 
     for user in users:
 
+        sys.stdout.write("Merging notebooks for user {}.\n".format(user))
+
         submitted_dir = os.path.join("submitted", user, assignment_id)
 
         filenames = [
