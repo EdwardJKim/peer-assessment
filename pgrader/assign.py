@@ -64,6 +64,8 @@ def assign_notebooks(users, assignment_id, week,
     if not os.path.exists(release_dir):
         os.makedirs(release_dir)
 
+    peers = assign_peers(table)
+
     for user in users:
 
         submitted_dir = os.path.join("submitted", user, assignment_id)
@@ -76,8 +78,6 @@ def assign_notebooks(users, assignment_id, week,
         release_user_dir = os.path.join(release_dir, user)
         if not os.path.exists(release_user_dir):
             os.makedirs(release_user_dir)
-
-        peers = assign_peers(table)
 
         for peer in peers[user]:
             for fname in filenames:
