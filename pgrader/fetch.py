@@ -22,9 +22,8 @@ def path_to_record(filename):
     if len(filename_list) != 3:
         sys.stderr.write("Invalid filename: {}".format(filename))
         raise 
-    username = filename_list[0]
     timestamp = parse_utc(filename_list[2])
-    return {'username': username, 'filename': filename, 'timestamp': timestamp}
+    return {'filename': filename, 'timestamp': timestamp}
 
 
 def groupby(l, key=lambda x: x):
@@ -56,6 +55,8 @@ def init_src(exchange_dir, student_id, course_id, assignment_id):
 
     pattern = os.path.join(inbound_path, '{}+{}+*'.format('data_scientist', assignment_id))
     records = [path_to_record(f) for f in glob.glob(pattern)]
+    for record in records:
+        record['username'] = student_id
     usergroups = groupby(records, lambda item: item['username'])
     src_records = [sort_by_timestamp(v)[0] for v in usergroups.values()]
 
@@ -75,20 +76,23 @@ def fetch_notebooks(exchange_dir, dest_dir, student_id, course_id, assignment_id
 
     course_path = os.path.join(exchange_dir, student_id, course_id)
     inbound_path = os.path.join(course_path, 'inbound')
+    source_path = os.path.join('source', course_id, assignment_id)
     src_records = init_src(exchange_dir, student_id, course_id, assignment_id)
 
-    for rec in self.src_records:
-        student_id = rec['username']
-        src_path = os.path.join(self.inbound_path, rec['filename'])
-        dest_path = self._format_path(self.submitted_directory, student_id, self.assignment_id)
-        if not os.path.exists(os.path.dirname(dest_path)):
-            os.makedirs(os.path.dirname(dest_path))
+    if src_records:
+        src_path = os.path.join(inbound_path, src_records[0]['filename'])
+    else:
+        sys.stdout.write(
+            "No submission: {} {}\n".format(student_id, assignment_id)
+        )
+        src_path = source_path
 
     dest_path = os.path.join(dest_dir, student_id, assignment_id)
-
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
 
-    sys.stdout.write("Updating submission: {} {}".format(student_id, assignment_id))
+    sys.stdout.write(
+        "Copying submission: {} {}\n".format(student_id, assignment_id)
+    )
     do_copy(src_path, dest_path)
 

@@ -11,6 +11,7 @@ def read_notebook(filename):
 
     return nb
 
+
 def write_notebook(filename, notebook):
 
     with io.open(filename, 'w', encoding='utf-8') as f:

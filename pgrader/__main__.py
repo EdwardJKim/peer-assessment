@@ -22,7 +22,7 @@ def main(args=None):
                 user, "accy", "accy570_hw1_due_8_30"
             )
     elif args[0] == "assign":
-        assign_notebooks(users, "week1", 1, remove_header=True)
+        assign_notebooks(users, "accy570_hw1_due_8_30", 1, remove_header=True)
     else:
         sys.stderr.write("Valid subcommands are: fetch, assign\n")
 
