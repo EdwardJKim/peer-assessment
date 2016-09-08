@@ -26,7 +26,6 @@ def test_create_table():
 
 def test_assign_peers():
 
-<<<<<<< HEAD
     def flatten(alist):
         return [i for sublist in alist for i in sublist]
 
@@ -39,17 +38,6 @@ def test_assign_peers():
                 flatten(list(peers.values())).count(net_id),
                 npeers
             )
-=======
-    def check_ten_students(table, peers, npeers):
-        for peer in table:
-            assert_equal(len(peers[peer]), npeers)
-            assert_equal(
-                set(peers[peer]),
-                set([i % 10 for i in
-                    range(table[peer] + 1, table[peer] + 1 + npeers)])
-            )
-            assert_not_in(table[peer], peers[peer])
->>>>>>> 5c6915533d45ca4a63c27b7eb6ce9324fe875a31
 
     table = {
         'a': 0,
@@ -63,7 +51,7 @@ def test_assign_peers():
         'i': 4,
         'j': 5
     }
-<<<<<<< HEAD
+
     peers = assign_peers(table, shuffle=False)
     check(table, peers, 5)
     assert_equal(set(peers['a']), set([i for i in 'bcdef']))
@@ -79,7 +67,3 @@ def test_assign_peers():
 
     peers = assign_peers(table, shuffle=True)
     check(table, peers, 5)
-=======
-    peers = assign_peers(table)
-    check_ten_students(table, peers, 5)
->>>>>>> 5c6915533d45ca4a63c27b7eb6ce9324fe875a31
