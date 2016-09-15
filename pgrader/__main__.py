@@ -25,7 +25,7 @@ def main(args=None):
     if len(args) == 0:
         sys.stderr.write(
             "Usage: pgrader <subcommand>\n"
-            "Valid subcommands are: fetch, assign, given, received\n"
+            "Valid subcommands are: fetch, assign, given, received, comments\n"
         )
         return 1
 
@@ -54,7 +54,9 @@ def main(args=None):
             return 1
         assignment_id = args[1]
         week_number = args[2]
-        assign_notebooks(users, assignment_id, week_number, remove_header=True)
+        assign_notebooks(
+            users, assignment_id, week_number, remove_header=True
+        )
 
     elif args[0] == "given":
         # autograde subcommand requires assignment_id
@@ -67,7 +69,9 @@ def main(args=None):
     elif args[0] == "received":
         # autograde subcommand requires assignment_id and week_number
         if len(args[1:]) != 2:
-            sys.stderr.write("Usage: pgrader received <assignment_id> <week_number>\n")
+            sys.stderr.write(
+                "Usage: pgrader received <assignment_id> <week_number>\n"
+            )
             return 1
         assignment_id = args[1]
         week_number = args[2]
@@ -76,14 +80,18 @@ def main(args=None):
     elif args[0] == "comments":
         # autograde subcommand requires assignment_id and week_number
         if len(args[1:]) != 2:
-            sys.stderr.write("Usage: pgrader comments <assignment_id> <week_number>\n")
+            sys.stderr.write(
+                "Usage: pgrader comments <assignment_id> <week_number>\n"
+            )
             return 1
         assignment_id = args[1]
         week_number = args[2]
         get_comments(users, assignment_id, week_number)
 
     else:
-        sys.stderr.write("Valid subcommands are: fetch, assign, given, received\n")
+        sys.stderr.write(
+            "Valid subcommands are: fetch, assign, given, received, comments\n"
+        )
 
 
 if __name__ == "__main__":
