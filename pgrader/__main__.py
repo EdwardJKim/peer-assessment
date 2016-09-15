@@ -1,3 +1,4 @@
+import os
 import sys
 from pgrader.assign import get_users, assign_notebooks
 from pgrader.fetch import fetch_notebooks
@@ -10,29 +11,46 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
 
-    if len(args) == 0:
-        sys.stderr.write("Usage: pgrader <subcommand>\n")
+    # check if a file named studentlist exsits.
+    # this file should have usernames separated by lines.
+    if os.path.exists("studentlist"):
+        users = get_users("studentlist")
+    else:
+        sys.stderr.write(
+            "A file named 'studentlist' with the list of usernames must exist.\n"
+        )
         return 1
 
-    users = get_users("studentlist.accy")
+    # check for subcommand
+    if len(args) == 0:
+        sys.stderr.write(
+            "Usage: pgrader <subcommand>\n"
+            "Valid subcommands are: fetch, assign, given, received\n"
+        )
+        return 1
 
+    # fetch subcommand requires course_id and assignment_id
     if args[0] == "fetch":
-        # fetch subcommand requires assignment_id
-        if len(args[1:]) != 1:
-            sys.stderr.write("Usage: pgrader fetch <assignment_id>\n")
+        if len(args[1:]) != 2:
+            sys.stderr.write(
+                "Usage: pgrader fetch <course_id> <assignment_id>\n"
+            )
             return 1
-        assignment_id = args[1]
+        course_id = args[1]
+        assignment_id = args[2]
         for user in users:
             fetch_notebooks(
-                "/home/ubuntu/export/exchange",
-                "/home/ubuntu/submitted",
-                user, "accy", assignment_id
+                os.path.join(os.getcwd(), "exchange"),
+                os.path.join(os.getcwd(), "submitted"),
+                user, course_id, assignment_id
             )
 
     elif args[0] == "assign":
         # assign subcommand requires assignment_id and week_number
         if len(args[1:]) != 2:
-            sys.stderr.write("Usage: pgrader assign <assignment_id> <week_number>\n")
+            sys.stderr.write(
+                "Usage: pgrader assign <assignment_id> <week_number>\n"
+            )
             return 1
         assignment_id = args[1]
         week_number = args[2]

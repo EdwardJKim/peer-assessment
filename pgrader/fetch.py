@@ -7,14 +7,6 @@ import shutil
 from collections import defaultdict
 
 
-def get_users(filename):
-
-    with open(filename) as f:
-        users = [line.strip().split()[0] for line in f]
-
-    return users
-
-
 def path_to_record(filename):
 
     # Only split twice on +, giving three components. This allows usernames with +.
