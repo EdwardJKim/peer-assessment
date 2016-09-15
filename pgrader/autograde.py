@@ -52,7 +52,7 @@ def get_peer_grading(users, assignment_id):
 
      for user in users:
           score = get_peer_grading_single(user, assignment_id)
-          sys.stdout.write("{} {}\n".format(
+          sys.stdout.write("{},{}\n".format(
               user, get_peer_grading_single(user, assignment_id)
           ))
 
@@ -106,4 +106,4 @@ def get_peer_assessment(users, assignment_id, week):
                 result[user] += sum(max3) / len(max3)
 
     for key, value in result.items():
-        sys.stdout.write("{} {}\n".format(key, value))
+        sys.stdout.write("{},{}\n".format(key, value))
