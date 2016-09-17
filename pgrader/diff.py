@@ -46,36 +46,36 @@ def get_notebook_names(course_id, assignment_id):
     return notebooks
 
 
-def get_solutions(users, course_id, assignment_id, notebook):
+def get_solutions(users, course_id, assignment_id):
 
     src_path = get_src_path(course_id, assignment_id)
+    notebooks = get_notebook_names(course_id, assignment_id)
 
     result = {}
     for user in users:
-        sol_path = get_sol_path(user, assignment_id)
-        src = extract_source(os.path.join(src_path, notebook))
-        sol = extract_source(os.path.join(sol_path, notebook))
-        result[user] = extract_solution_diff(src, sol)
+        for notebook in notebooks:
+            sol_path = get_sol_path(user, assignment_id)
+            src = extract_source(os.path.join(src_path, notebook))
+            sol = extract_source(os.path.join(sol_path, notebook))
+            result[user] = extract_solution_diff(src, sol)
 
     return result
 
 
-def compare_notebooks(users, course_id, assignment_id, min_ratio=0.95):
+def compare_notebooks(users, course_id, assignment_id, min_ratio=0.9):
 
-    notebooks = get_notebook_names(course_id, assignment_id)
 
     score = []
-    for notebook in notebooks:
-        solutions = get_solutions(users, course_id, assignment_id, notebook)
+    solutions = get_solutions(users, course_id, assignment_id)
 
-        for i, user in enumerate(sorted(users)):
-            peers = sorted(users) # make a copy
-            for peer in peers[i+1:]:
-                if solutions[user].strip() and solutions[peer].strip():
-                    matcher = SequenceMatcher(None, solutions[user], solutions[peer])
-                    score.append((user, peer, notebook, matcher.ratio()))
+    for i, user in enumerate(sorted(users)):
+        peers = sorted(users) # make a copy
+        for peer in peers[i+1:]:
+            if solutions[user].strip() and solutions[peer].strip():
+                matcher = SequenceMatcher(None, solutions[user], solutions[peer])
+                score.append((user, peer, matcher.ratio()))
 
-    result = [i for i in score if i[3] >= min_ratio]
-    result = sorted(result, key=lambda x: x[3], reverse=True)
+    result = [i for i in score if i[2] >= min_ratio]
+    result = sorted(result, key=lambda x: x[2], reverse=True)
 
     return result

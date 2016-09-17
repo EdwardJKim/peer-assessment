@@ -57,7 +57,7 @@ def main(args=None):
         assignment_id = args[2]
         diff = compare_notebooks(users, course_id, assignment_id)
         for d in diff:
-            sys.stdout.write("{},{},{},{}\n".format(*d))
+            sys.stdout.write("{0},{1},{2:.3f}\n".format(*d))
 
     elif args[0] == "assign":
         # assign subcommand requires assignment_id and week_number
