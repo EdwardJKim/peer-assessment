@@ -4,6 +4,7 @@ from pgrader.assign import get_users, assign_notebooks
 from pgrader.fetch import fetch_notebooks
 from pgrader.autograde import get_peer_grading, get_peer_assessment
 from pgrader.comments import get_comments
+from pgrader.diff import compare_notebooks
 
 
 def main(args=None):
@@ -44,6 +45,19 @@ def main(args=None):
                 os.path.join(os.getcwd(), "submitted"),
                 user, course_id, assignment_id
             )
+
+    # diff subcommand requires course_id and assignment_id
+    if args[0] == "diff":
+        if len(args[1:]) != 2:
+            sys.stderr.write(
+                "Usage: pgrader diff <course_id> <assignment_id>\n"
+            )
+            return 1
+        course_id = args[1]
+        assignment_id = args[2]
+        diff = compare_notebooks(users, course_id, assignment_id)
+        for d in diff:
+            sys.stdout.write("{}\n".format(d))
 
     elif args[0] == "assign":
         # assign subcommand requires assignment_id and week_number
