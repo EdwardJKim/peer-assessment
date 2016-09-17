@@ -60,7 +60,7 @@ def get_solutions(users, course_id, assignment_id, notebook):
     return result
 
 
-def compare_notebooks(users, course_id, assignment_id, n=20):
+def compare_notebooks(users, course_id, assignment_id, min_ratio=0.95):
 
     notebooks = get_notebook_names(course_id, assignment_id)
 
@@ -75,6 +75,7 @@ def compare_notebooks(users, course_id, assignment_id, n=20):
                     matcher = SequenceMatcher(None, solutions[user], solutions[peer])
                     score.append((user, peer, notebook, matcher.ratio()))
 
-    result = sorted(score, key=lambda x: x[3], reverse=True)
+    result = [i for i in score if i[3] >= min_ratio]
+    result = sorted(result, key=lambda x: x[3], reverse=True)
 
-    return result[:n]
+    return result
