@@ -61,7 +61,7 @@ def get_three_largest(a_list):
 
     sorted_list = sorted(a_list)
 
-    return sorted_list[-3:]
+    return sorted_list[-4:-1]
 
 
 def get_peer_assessment(users, assignment_id, week):
