@@ -61,7 +61,12 @@ def get_three_largest(a_list):
 
     sorted_list = sorted(a_list)
 
-    return sorted_list[-4:-1]
+    if len(a_list) > 3:
+        result = sorted_list[-4:-1]
+    else:
+        result = sorted_list
+
+    return a_list
 
 
 def get_peer_assessment(users, assignment_id, week):
@@ -100,10 +105,14 @@ def get_peer_assessment(users, assignment_id, week):
         name = table[user]
         if user not in result:
             result[user] = 0
-        for prob in score[name]:
-            max3 = get_three_largest(score[name][prob])
-            if sum(max3) > 0:
-                result[user] += sum(max3) / len(max3)
+        # assume there are 3 problems in each assignment
+        if name in score and len(score[name]) == 3:
+            for prob in score[name]:
+                max3 = get_three_largest(score[name][prob])
+                if sum(max3) > 0:
+                    result[user] += sum(max3) / len(max3)
+        else:
+            result[user] += 30
 
     for key, value in result.items():
         sys.stdout.write("{},{}\n".format(key, value))

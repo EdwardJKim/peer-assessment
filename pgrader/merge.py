@@ -25,6 +25,7 @@ def merge_notebooks(filenames, remove_header=False):
         if remove_header:
             for i, cell in enumerate(nb.cells):
                 if ('nbgrader' in cell['metadata'] and
+                    'grade_id' in cell['metadata']['nbgrader'] and
                     cell['metadata']['nbgrader']['grade_id'] == 'header'):
                     nb.cells.pop(i)
         if merged is None:
