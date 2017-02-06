@@ -27,8 +27,16 @@ def get_review(user, assignment_id):
     return yaml_data
 
 
-def validate(score):
+def validate_score(score):
     return score >= 0 and score <= 5
+
+
+def validate_comment(comment):
+    # TODO: NLP?
+    if comment:
+        return True
+    else:
+        return False
 
 
 def get_peer_grading_single(user, assignment_id):
@@ -39,11 +47,12 @@ def get_peer_grading_single(user, assignment_id):
 
      if yaml_data:
          for peer in yaml_data:
-             for problem in yaml_data[peer]:
-                 review = yaml_data[peer][problem]
-                 if (validate(review["correctness"]) and
-                     validate(review["readability"])):
-                     score += 1
+             review = yaml_data[peer]
+             if (validate_score(review["correctness"]) and
+                 validate_score(review["readability"])):
+                 score += 2
+             if validate_comment(review["comments"]):
+                 score += 1
 
      return score
 
@@ -57,18 +66,6 @@ def get_peer_grading(users, assignment_id):
           ))
 
 
-def get_three_largest(a_list):
-
-    sorted_list = sorted(a_list)
-
-    if len(a_list) > 3:
-        result = sorted_list[-4:-1]
-    else:
-        result = sorted_list
-
-    return a_list
-
-
 def get_peer_assessment(users, assignment_id, week):
 
     score = {}
@@ -79,23 +76,23 @@ def get_peer_assessment(users, assignment_id, week):
 
          if yaml_data:
 
-             for peer in yaml_data:
+             for problem_peer in yaml_data:
+
+                 problem, peer = problem_peer.split('_', 1)
 
                  if peer not in score:
                      score[peer] = {}
 
-                 for problem in yaml_data[peer]:
+                 if problem not in score[peer]:
+                     score[peer][problem] = []
+                 review = yaml_data[problem_peer]
 
-                     if problem not in score[peer]:
-                         score[peer][problem] = []
-                     review = yaml_data[peer][problem]
-
-                     if (validate(review["correctness"]) and
-                         validate(review["readability"])):
-                         score[peer][problem].append(
-                             float(review["correctness"]) +
-                             float(review["readability"])
-                         )
+                 if (validate_score(review["correctness"]) and
+                     validate_score(review["readability"])):
+                     score[peer][problem].append(
+                         float(review["correctness"]) +
+                         float(review["readability"])
+                     )
 
     table = make_table(users, week)
 
@@ -105,14 +102,14 @@ def get_peer_assessment(users, assignment_id, week):
         name = table[user]
         if user not in result:
             result[user] = 0
-        # assume there are 3 problems in each assignment
-        if name in score and len(score[name]) == 3:
+        if name in score:
             for prob in score[name]:
-                max3 = get_three_largest(score[name][prob])
-                if sum(max3) > 0:
-                    result[user] += sum(max3) / len(max3)
-        else:
-            result[user] += 30
+                if len(score[name][prob]) > 0:
+                    result[user] += max(score[name][prob])
+                else:
+                    result[user] = -99999
+                    sys.stdout.write("No peer assesment found for {}, {}\n"
+                        "".format(user, prob))
 
     for key, value in result.items():
         sys.stdout.write("{},{}\n".format(key, value))

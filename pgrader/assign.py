@@ -56,7 +56,14 @@ def assign_peers(table, npeers=5, shuffle=True):
 
 
 def assign_notebooks(users, assignment_id, week,
-    header="header.ipynb", footer="footer.ipynb", remove_header=False):
+    header="header.ipynb", footer="footer.ipynb", remove_header=False,
+    nnotebooks=6, nnb_per_week=3):
+
+    if nnotebooks % nnb_per_week:
+        raise ValueError(
+            "The total number of notebooks must be a multiple of 3, "
+            "because we always assume there will be 3 problem per week."
+        )
 
     release_dir = os.path.join("release", assignment_id)
 
@@ -65,7 +72,7 @@ def assign_notebooks(users, assignment_id, week,
     if not os.path.exists(release_dir):
         os.makedirs(release_dir)
 
-    peers = assign_peers(table)
+    peers = assign_peers(table, npeers=nnotebooks)
 
     for user in users:
 
@@ -75,15 +82,19 @@ def assign_notebooks(users, assignment_id, week,
 
         filenames = [
             f for f in os.listdir(submitted_dir)
-            if f.endswith("ipynb") and f.startswith("Problem_")
+            if f.endswith(".ipynb") and ("Copy" not in f)
+            and (not f.startswith("Untitled"))
         ]
+
+        assert len(filenames) == nnb_per_week
 
         release_user_dir = os.path.join(release_dir, user)
         if not os.path.exists(release_user_dir):
             os.makedirs(release_user_dir)
 
-        for peer in peers[user]:
-            for fname in filenames:
+        for i, peer in enumerate(peers[user]):
+
+                fname = filenames[i % nnb_per_week]
 
                 peer_path = os.path.join(
                     "submitted", peer, assignment_id, fname
