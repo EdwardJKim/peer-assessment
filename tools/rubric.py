@@ -8,18 +8,17 @@ class Rubric():
     def __init__(self, nb_name, yml_path=None, **kwargs):
         """Constructor"""
         
-        week, assignment = nb_name.split('/')[-2:]
+        peer_review, week, assignment = nb_name.split('/')
         assignment = assignment.split('.')[0]
-        problem = '_'.join(assignment.split('_')[:2])
-        student = '_'.join(assignment.split('_')[-3:])
+        problem = '_'.join(assignment.split('_'))
 
-        self.student = student
         self.problem = problem
 
-        cwd = os.path.join(os.path.expanduser('~'), week)
-        assignments = [f.split('.')[0] for f in os.listdir(cwd) if f.endswith('.ipynb')]
-        self.all_problems = list(set(['_'.join(a.split('_')[:2]) for a in assignments]))
-        self.all_students = ['_'.join(a.split('_')[-3:]) for a in assignments]
+        cwd = os.path.join(os.path.expanduser('~'), peer_review, week)
+        self.all_problems = [
+            f.split('.')[0] for f in os.listdir(cwd)
+            if f.endswith('.ipynb')
+        ]
         
         if yml_path is None:
             self.yml_path = os.path.join(cwd, '{}.yml'.format(week))
@@ -38,7 +37,7 @@ class Rubric():
             
     def _get_input(self, name, minimum=0, maximum=5):
         
-        value = input("Enter your score for {}: ".format(name))
+        value = input("Type your score for {} and press ENTER: ".format(name))
         
         while True:
             try:
@@ -59,7 +58,7 @@ class Rubric():
 
         self.correctness = {
             0: 'Code does not run.',
-            2: 'Code runs, but does not produce correct ',
+            2: 'Code runs, but does not produce correct output',
             4: 'Code runs, produces correct output but output is difficult to understand.',
             5: 'Code runs, produces correct output and output is easy to understand.'
         }
@@ -82,7 +81,7 @@ class Rubric():
         self.readability_value = self._get_input('readability')
         print('-' * 80)
         
-        self.comments_value = input('Enter any comments: ')
+        self.comments_value = input('Type any comments and press ENTER: ')
         print('-' * 80)
         
         print('Assessment saved. To change your assessment, simply run the code cell again.')
@@ -92,7 +91,6 @@ class Rubric():
         
     def _save_submitted(self, path):
 
-        s = self.student
         p = self.problem
 
         if os.path.exists(path):
@@ -102,14 +100,12 @@ class Rubric():
         else:
             data = {}
 
-        if s not in data:
-            data[s] = {}
-        if p not in data[s]:
-            data[s][p] = {}
+        if p not in data:
+            data[p] = {}
 
-        data[s][p]['correctness'] = self.correctness_value
-        data[s][p]['readability'] = self.readability_value
-        data[s][p]['comments'] = self.comments_value
+        data[p]['correctness'] = self.correctness_value
+        data[p]['readability'] = self.readability_value
+        data[p]['comments'] = self.comments_value
 
         with open(path, 'w') as f:
             f.write(yaml.dump(data))
@@ -119,35 +115,28 @@ class Rubric():
         with open(self.yml_path) as f:
             data = yaml.load(f)
 
-        done = {}
-        todo = {}
+        done = []
+        todo = []
 
-        for student in self.all_students:
-            if student not in data.keys():
-                done[student] = ['']
-                todo[student] = self.all_problems
-                continue
-            done[student] = []
-            todo[student] = []
-            for problem in self.all_problems:
-                if problem in data[student].keys():
-                    done[student].append(problem)
-                else:
-                    todo[student].append(problem)
+        for problem in self.all_problems:
+            if problem not in data.keys():
+                todo.append(problem)
+            else:
+                done.append(problem)
      
         print('\nCompleted tasks')
         print('-' * 80)
-        for s in sorted(done):
-            print('{}: {}'.format(s, ', '.join(done[s])))
+        for problem in sorted(done):
+            print('{}'.format(problem))
+        print('\n' * (len(self.all_problems) - len(done)))
         print('-' * 80)
         print('Remaining tasks')
         print('-' * 80)
      
         # check for any non-empty list, an empty list is False
-        if any(todo.values()):
-            for s in sorted(todo):
-                if todo[s]:
-                    print('{}: {}'.format(s, ', '.join(todo[s])))
+        if todo:
+            for problem in sorted(todo):
+                print('{}'.format(problem))
         # if all empty
         else:
             print('You have no remaining tasks.\n\nYou are ready to submit. Go to Assignments tab and click Submit.')
