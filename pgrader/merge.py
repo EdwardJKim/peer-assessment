@@ -24,9 +24,9 @@ def merge_notebooks(filenames, remove_header=False):
         nb = read_notebook(fname)
         if remove_header:
             for i, cell in enumerate(nb.cells):
-                if ('nbgrader' in cell['metadata'] and
-                    'grade_id' in cell['metadata']['nbgrader'] and
-                    cell['metadata']['nbgrader']['grade_id'] == 'header'):
+                if ('nbgrader' in cell['metadata']) and
+                   ('grade_id' in cell['metadata']['nbgrader']) and
+                   (cell['metadata']['nbgrader']['grade_id'] == 'header'):
                     nb.cells.pop(i)
             for i, cell in enumerate(nb.cells):
                 is_due_date = any('# Due Date:' in s for s in cell['source'][:3])
