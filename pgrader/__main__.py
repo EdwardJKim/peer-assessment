@@ -68,9 +68,7 @@ def main(args=None):
             return 1
         assignment_id = args[1]
         week_number = args[2]
-        assign_notebooks(
-            users, assignment_id, week_number, remove_header=True
-        )
+        assign_notebooks(users, assignment_id, week_number)
 
     elif args[0] == "given":
         # autograde subcommand requires assignment_id
