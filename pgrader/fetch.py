@@ -55,9 +55,18 @@ def init_src(exchange_dir, student_id, course_id, assignment_id):
     return src_records
 
 
-def do_copy(src, dest, perms=None):
+def copy_src_dir(src, dest, perms=None):
     """Copy the src dir to the dest dir"""
     shutil.copytree(src, dest)
+    if perms:
+        for dirname, dirnames, filenames in os.walk(dest):
+            for filename in filenames:
+                os.chmod(os.path.join(dirname, filename), perms)
+
+
+def copy_src_file(src, dest, perms=None):
+    """Copy the src file to the dest dir"""
+    shutil.copy(src, dest)
     if perms:
         for dirname, dirnames, filenames in os.walk(dest):
             for filename in filenames:
@@ -86,5 +95,19 @@ def fetch_notebooks(exchange_dir, dest_dir, student_id, course_id, assignment_id
     sys.stdout.write(
         "Copying submission: {} {}\n".format(student_id, assignment_id)
     )
-    do_copy(src_path, dest_path)
+    copy_src_dir(src_path, dest_path)
 
+    src_files = [f for f in os.listdir(source_path)]
+    dest_files = [f for f in os.listdir(dest_path)]
+
+    for src_file in src_files:
+        if src_file not in dest_files:
+            copy_src_file(os.path.join(source_path, src_file), dest_path)
+
+    for dest_file in dest_files:
+        if dest_file not in src_files:
+            d = os.path.join(dest_path, dest_file)
+            if os.path.isfile(d):
+                os.remove(d)
+            else:
+                shutil.rmtree(d)

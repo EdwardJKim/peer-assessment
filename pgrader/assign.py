@@ -57,12 +57,12 @@ def assign_peers(table, npeers=5, shuffle=True):
 
 def assign_notebooks(users, assignment_id, week,
     header="header.ipynb", footer="footer.ipynb", remove_header=False,
-    nnotebooks=6, nnb_per_week=3):
+    nnotebooks=8, nnb_per_week=4, prefix='Problem_'):
 
     if nnotebooks % nnb_per_week:
         raise ValueError(
-            "The total number of notebooks must be a multiple of 3, "
-            "because we always assume there will be 3 problem per week."
+            "The total number of notebooks must be a multiple of 4, "
+            "because we always assume there will be 4 problems per week."
         )
 
     release_dir = os.path.join("release", assignment_id)
@@ -83,7 +83,7 @@ def assign_notebooks(users, assignment_id, week,
         filenames = [
             f for f in os.listdir(submitted_dir)
             if f.endswith(".ipynb") and ("Copy" not in f)
-            and (not f.startswith("Untitled"))
+            and (f.startswith(prefix)) and (not f.startswith("Untitled"))
         ]
 
         assert len(filenames) == nnb_per_week
