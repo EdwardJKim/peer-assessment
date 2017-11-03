@@ -23,11 +23,12 @@ def merge_notebooks(filenames, remove_header=False):
     for fname in filenames:
         nb = read_notebook(fname)
         if remove_header:
-            for i, cell in enumerate(nb.cells):
-                if ('nbgrader' in cell['metadata'] and
-                    'grade_id' in cell['metadata']['nbgrader'] and
-                    cell['metadata']['nbgrader']['grade_id'] == 'header'):
-                    nb.cells.pop(i)
+            for i, cell in enumerate(nb.cells[:]):
+                grade_id_exists = ('nbgrader' in cell['metadata']) and ('grade_id' in cell['metadata']['nbgrader'])
+                header_exists = grade_id_exists and (cell['metadata']['nbgrader']['grade_id'] == 'header')
+                due_date_exists = grade_id_exists and (cell['metadata']['nbgrader']['grade_id'] == 'due_date')
+                if header_exists or due_date_exists:
+                    nb.cells.remove(cell)
         if merged is None:
             merged = nb
         else:
