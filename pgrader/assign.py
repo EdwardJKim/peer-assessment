@@ -59,12 +59,6 @@ def assign_notebooks(users, assignment_id, week,
     header="header.ipynb", footer="footer.ipynb", remove_header=False,
     nnotebooks=8, nnb_per_week=4, prefix='Problem_'):
 
-    if nnotebooks % nnb_per_week:
-        raise ValueError(
-            "The total number of notebooks must be a multiple of 4, "
-            "because we always assume there will be 4 problems per week."
-        )
-
     release_dir = os.path.join("release", assignment_id)
 
     table = make_table(users, week)

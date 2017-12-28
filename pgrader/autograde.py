@@ -48,9 +48,10 @@ def get_peer_grading_single(user, assignment_id):
      if yaml_data:
          for peer in yaml_data:
              review = yaml_data[peer]
-             if (validate_score(review["correctness"]) and
-                 validate_score(review["readability"])):
-                 score += 2
+             if validate_score(review["correctness"]):
+                 score += 1
+             if validate_score(review["readability"]):
+                 score += 1
              if validate_comment(review["comments"]):
                  score += 1
 
@@ -75,10 +76,10 @@ def get_peer_assessment(users, assignment_id, week):
          yaml_data = get_review(user, assignment_id)
 
          if yaml_data:
-
              for problem_peer in yaml_data:
 
-                 problem, peer = problem_peer.split('_', 1)
+                 prefix, num, peer = problem_peer.split('_', 2)
+                 problem = prefix + '_' + num
 
                  if peer not in score:
                      score[peer] = {}
@@ -102,14 +103,16 @@ def get_peer_assessment(users, assignment_id, week):
         name = table[user]
         if user not in result:
             result[user] = 0
-        if name in score:
+        if (name in score) and (len(score[name]) == 4):
             for prob in score[name]:
                 if len(score[name][prob]) > 0:
                     result[user] += max(score[name][prob])
                 else:
                     result[user] = -99999
-                    sys.stdout.write("No peer assesment found for {}, {}\n"
+                    sys.stdout.write("No peer assesment found for {}, {}.\n"
                         "".format(user, prob))
+        else:
+            result[user] = 9900
 
     for key, value in result.items():
         sys.stdout.write("{},{}\n".format(key, value))

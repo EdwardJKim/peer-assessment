@@ -63,7 +63,7 @@ def get_solutions(users, course_id, assignment_id):
     return result
 
 
-def compare_notebooks(users, course_id, assignment_id, min_ratio=0.9):
+def compare_notebooks(users, course_id, assignment_id, min_ratio=0.8):
 
     result = []
     solutions = get_solutions(users, course_id, assignment_id)

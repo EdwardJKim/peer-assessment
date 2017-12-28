@@ -61,14 +61,25 @@ def main(args=None):
 
     elif args[0] == "assign":
         # assign subcommand requires assignment_id and week_number
-        if len(args[1:]) != 2:
+        if len(args[1:]) == 2:
+            assignment_id = args[1]
+            week_number = args[2]
+            nnb_per_week = 3
+            nnotebooks = 2 * nnb_per_week
+        elif len(args[1:]) == 3:
+            assignment_id = args[1]
+            week_number = args[2]
+            nnb_per_week = int(args[3])
+            nnotebooks = 2 * nnb_per_week
+        else:
             sys.stderr.write(
-                "Usage: pgrader assign <assignment_id> <week_number>\n"
+                "Usage: pgrader assign <assignment_id> <week_number> <number_of_notebooks>\n\n"
+                "number_of_notebooks is optional. (Default: 4)\n"
             )
             return 1
-        assignment_id = args[1]
-        week_number = args[2]
-        assign_notebooks(users, assignment_id, week_number)
+        assign_notebooks(
+            users, assignment_id, week_number,
+            nnotebooks=nnotebooks, nnb_per_week=nnb_per_week, remove_header=True)
 
     elif args[0] == "given":
         # autograde subcommand requires assignment_id

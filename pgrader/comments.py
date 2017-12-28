@@ -20,18 +20,20 @@ def get_comments(users, assignment_id, week):
 
              for problem_peer in yaml_data:
 
-                 problem, peer = problem_peer.split('_', 1)
+                 prefix, num, peer = problem_peer.split('_', 2)
+                 problem = prefix + '_' + num
 
-                 name = invert[peer]
+                 if peer in invert:
+                     name = invert[peer]
 
-                 if name not in comments:
-                     comments[name] = {}
-
-                 if problem not in comments[name]:
-                     comments[name][problem] = []
-                 review = yaml_data[problem_peer]
-
-                 if review["comments"]:
-                     comments[name][problem].append(review["comments"])
+                     if name not in comments:
+                         comments[name] = {}
+    
+                     if problem not in comments[name]:
+                         comments[name][problem] = []
+                     review = yaml_data[problem_peer]
+    
+                     if review["comments"]:
+                         comments[name][problem].append(review["comments"])
 
     sys.stdout.write(yaml.dump(comments))
